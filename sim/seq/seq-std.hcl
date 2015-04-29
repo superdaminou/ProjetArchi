@@ -122,6 +122,9 @@ int dstM = [
 
 ## Select input A to ALU
 int aluA = [
+	icode == OPL && rA == RNONE : valC;
+	icode == OPL : valA;
+
 	icode in { RRMOVL, OPL } : valA;
 	icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
 	icode in { CALL, PUSHL } : -4;
