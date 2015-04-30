@@ -25,8 +25,9 @@ typedef enum { R_ARG, M_ARG, I_ARG, NO_ARG } arg_t;
  * mais il faut alors recompiler tous les fichiers yo
  */
 #define I_ALUI I_ALU
+#define I_IRMOVL I_RRMOVL
 
-typedef enum { I_NOP, I_HALT, I_RRMOVL, I_IRMOVL, I_RMMOVL, I_MRMOVL,
+typedef enum { I_NOP, I_HALT, I_RRMOVL, I_FREE2, I_RMMOVL, I_MRMOVL,
 	       I_ALU, I_JXX, I_CALL, I_RET, I_PUSHL, I_POPL,
 	       I_FREE1, I_LEAVE, I_JREG, I_JMEM, I_POP2 } itype_t;
 

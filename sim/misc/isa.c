@@ -709,6 +709,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	set_reg_val(s->r, lo1, val);
 	s->pc = ftpc;
 	break;
+#if 0
     case I_IRMOVL:
 	if (!ok1) {
 	    if (error_file)
@@ -733,6 +734,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	set_reg_val(s->r, lo1, cval);
 	s->pc = ftpc;
 	break;
+#endif
     case I_RMMOVL:
 	if (!ok1) {
 	    if (error_file)
@@ -792,7 +794,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	set_reg_val(s->r, hi1, val);
 	s->pc = ftpc;
 	break;
-    /*
+            
      case I_ALU:
 	if (!ok1) {
 	    if (error_file)
@@ -807,7 +809,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	s->cc = compute_cc(lo0, argA, argB);
 	s->pc = ftpc;
 	break;
-     */
+            
     case I_JXX:
 	if (!ok1) {
 	    if (error_file)
@@ -924,6 +926,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	set_reg_val(s->r, REG_EBP, val);
 	s->pc = ftpc;
 	break;
+#if 0
     case I_ALUI:
 	if (!ok1) {
 	    if (error_file)
@@ -951,6 +954,7 @@ exc_t step_state(state_ptr s, FILE *error_file)
 	s->cc = compute_cc(A_ADD, cval, argB);
 	s->pc = ftpc;
 	break;
+#endif
     default:
 	if (error_file)
 	    fprintf(error_file,

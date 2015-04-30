@@ -197,6 +197,13 @@ int new_E_valB = [
 
 ## Select input A to ALU
 int aluA = [
+
+	E_icode == OPL && E_srcA == RNONE : E_valC;
+	E_icode == OPL : E_valA;
+	
+	E_icode ==RRMOVL && E_srcA == RNONE :E_valC;
+	E_icode == RRMOVL : E_valA;
+
 	E_icode in { RRMOVL, OPL } : E_valA;
 	E_icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : E_valC;
 	E_icode in { CALL, PUSHL } : -4;

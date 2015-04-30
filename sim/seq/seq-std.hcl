@@ -124,6 +124,9 @@ int dstM = [
 int aluA = [
 	icode == OPL && rA == RNONE : valC;
 	icode == OPL : valA;
+	
+	icode == RRMOVL && rA == RNONE : valC;
+	icode ==RRMOVL : valA;
 
 	icode in { RRMOVL, OPL } : valA;
 	icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
