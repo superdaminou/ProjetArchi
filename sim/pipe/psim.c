@@ -1323,6 +1323,7 @@ int gen_f_pc();
 int gen_need_regids();
 int gen_need_valC();
 int gen_instr_valid();
+int gen_instr_next_ifun();
 int gen_new_F_predPC();
 int gen_new_D_icode();
 
@@ -1355,14 +1356,21 @@ void do_if_stage()
     /* Ready to fetch instruction.  Speculatively fetch register byte
        and immediate word
     */
-    fetch_ok = get_byte_val(mem, valp, &instr);
-    if (fetch_ok) {
-	if_id_next->icode = GET_ICODE(instr);
-	if_id_next->ifun = GET_FUN(instr);
-    } else {
-	if_id_next->icode = I_NOP;
-	if_id_next->ifun = 0;
-	nstatus = EXC_ADDR;
+    //fetch_ok = get_byte_val(mem, valp, &instr);
+    if(gen_instr_next_ifun () != -1){
+	if_id_next->ifun = gen_instr_next_ifun();
+	fetch_ok=TRUE;
+    }
+    else{
+	fetch_ok)=get_byte_val(mem, valp, &instr);
+        if (fetch_ok) {
+	    if_id_next->icode = GET_ICODE(instr);
+	    if_id_next->ifun = GET_FUN(instr);
+        } else {
+	    if_id_next->icode = I_NOP;
+	    if_id_next->ifun = 0;
+	    nstatus = EXC_ADDR;
+        }
     }
     valp++;
     if (fetch_ok && gen_need_regids()) {
@@ -1378,7 +1386,8 @@ void do_if_stage()
     if_id_next->valp = valp;
     if_id_next->valc = valc;
 
-    pc_next->pc = gen_new_F_predPC();
+    if (gen_instr_next_ifun() == -1)
+	pc_next->pc = gen_new_F_predPC();
 
     if (!gen_instr_valid())
 	{
