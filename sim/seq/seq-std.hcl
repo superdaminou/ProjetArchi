@@ -38,6 +38,7 @@ intsig POPL	'I_POPL'
 intsig JMEM	'I_JMEM'
 intsig JREG	'I_JREG'
 intsig LEAVE	'I_LEAVE'
+intsig ENTER    'I_ENTER'
 
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
 intsig RESP     'REG_ESP'    	# Stack Pointer
@@ -89,6 +90,7 @@ bool instr_valid = icode in
 	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
 	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL };
 int instr_next_ifun = [
+	icode == ENTER && ifun == 0 : 1;
 	1 : -1;
 ];
 

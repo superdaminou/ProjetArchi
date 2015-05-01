@@ -47,6 +47,8 @@ char *reg_name(reg_id_t id)
 
 instr_t instruction_set[] = 
 {
+    {"enter",    HPACK(I_NOP, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
+    {"enter1",    HPACK(I_NOP, 1), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     {"nop",    HPACK(I_NOP, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     {"halt",   HPACK(I_HALT, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     {"rrmovl", HPACK(I_RRMOVL, 0), 2, R_ARG, 1, 1, R_ARG, 1, 0 },
