@@ -97,7 +97,12 @@ int instr_next_ifun = [
 ################ Decode Stage    ###################################
 
 ## What register should be used as the A source?
+
+	
 int srcA = [
+	icode == ENTER && ifun == 0 : REBP;
+	icode == ENTER && ifun == 1 : RESP;
+
 	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
 	icode in { POPL, RET } : RESP;
 	1 : RNONE; # Don't need register
@@ -105,6 +110,9 @@ int srcA = [
 
 ## What register should be used as the B source?
 int srcB = [
+	icode == ENTER && ifun == 0 : REBP;
+	icode == ENTER && ifun == 1 : RESP;
+
 	icode in { OPL, IOPL, RMMOVL, MRMOVL } : rB;
 	icode in { PUSHL, POPL, CALL, RET } : RESP;
 	1 : RNONE;  # Don't need register
@@ -112,6 +120,9 @@ int srcB = [
 
 ## What register should be used as the E destination?
 int dstE = [
+	icode == ENTER && ifun == 0 : REBP;
+	icode == ENTER && ifun == 1 : RESP;
+
 	icode in { RRMOVL, IRMOVL, OPL, IOPL } : rB;
 	icode in { PUSHL, POPL, CALL, RET } : RESP;
 	1 : RNONE;  # Don't need register
@@ -127,11 +138,15 @@ int dstM = [
 
 ## Select input A to ALU
 int aluA = [
+	icode == ENTER && ifun == 0: valA;
+	icode == ENTER && ifun == 1: -4;
+
+
 	icode == OPL && rA == RNONE : valC;
 	icode == OPL : valA;
 	
 	icode == RRMOVL && rA == RNONE : valC;
-	icode ==RRMOVL : valA;
+	icode == RRMOVL : valA;
 
 	icode in { RRMOVL, OPL } : valA;
 	icode in { IRMOVL, RMMOVL, MRMOVL, IOPL } : valC;
@@ -142,6 +157,9 @@ int aluA = [
 
 ## Select input B to ALU
 int aluB = [
+
+	icode == ENTER && ifun == 0 : valB;
+	icode == ENTER && ifun == 1 :0;
 	icode in { RMMOVL, MRMOVL, OPL, IOPL, CALL, PUSHL, RET, POPL } : valB;
 	icode in { RRMOVL, IRMOVL } : 0;
 	# Other instructions don't need ALU
@@ -162,10 +180,11 @@ bool set_cc = icode in { OPL, IOPL };
 bool mem_read = icode in { MRMOVL, POPL, RET };
 
 ## Set write control signal
-bool mem_write = icode in { RMMOVL, PUSHL, CALL };
+bool mem_write = icode in { RMMOVL, PUSHL, CALL } || (icode ==ENTER && ifun = 0);
 
 ## Select memory address
 int mem_addr = [
+	icode == ENTER && ifun == 0 :valE;
 	icode in { RMMOVL, PUSHL, CALL, MRMOVL } : valE;
 	icode in { POPL, RET } : valA;
 	# Other instructions don't need address
@@ -174,6 +193,7 @@ int mem_addr = [
 ## Select memory input data
 int mem_data = [
 	# Value from register
+	icode == ENTER && ifun==0 : valA;
 	icode in { RMMOVL, PUSHL } : valA;
 	# Return PC
 	icode == CALL : valP;
