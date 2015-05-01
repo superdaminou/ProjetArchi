@@ -136,7 +136,7 @@ bool instr_valid = f_icode in
 	{ NOP, HALT, RRMOVL, IRMOVL, RMMOVL, MRMOVL,
 	       OPL, IOPL, JXX, CALL, RET, PUSHL, POPL };
 int instr_next_ifun = [
-	icode == ENTER && ifun == 0 : 1;
+	f_icode == ENTER && f_ifun == 0 : 1;
 	1 : -1;
 ];
 

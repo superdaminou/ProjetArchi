@@ -666,7 +666,7 @@ static exc_t sim_step()
 	ifun = gen_instr_next_ifun();
     else{
         if (get_byte_val(mem, valp, &instr)) {
-	    code = HI4(instr);
+	    icode = HI4(instr);
 	    ifun = LO4(instr);
         } else {
 	    instr = HPACK(I_NOP,0);

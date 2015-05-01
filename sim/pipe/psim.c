@@ -1362,7 +1362,7 @@ void do_if_stage()
 	fetch_ok=TRUE;
     }
     else{
-	fetch_ok)=get_byte_val(mem, valp, &instr);
+	fetch_ok=get_byte_val(mem, valp, &instr);
         if (fetch_ok) {
 	    if_id_next->icode = GET_ICODE(instr);
 	    if_id_next->ifun = GET_FUN(instr);
