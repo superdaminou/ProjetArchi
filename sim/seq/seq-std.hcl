@@ -25,11 +25,11 @@ quote '  {plusmode=0;return sim_main(argc,argv);}'
 intsig NOP 	'I_NOP'
 intsig HALT	'I_HALT'
 intsig RRMOVL	'I_RRMOVL'
-#intsig IRMOVL	'I_IRMOVL'
+intsig IRMOVL	'I_IRMOVL'
 intsig RMMOVL	'I_RMMOVL'
 intsig MRMOVL	'I_MRMOVL'
 intsig OPL	'I_ALU'
-#intsig IOPL	'I_ALUI'
+intsig IOPL	'I_ALUI'
 intsig JXX	'I_JXX'
 intsig CALL	'I_CALL'
 intsig RET	'I_RET'
@@ -38,7 +38,7 @@ intsig POPL	'I_POPL'
 intsig JMEM	'I_JMEM'
 intsig JREG	'I_JREG'
 intsig LEAVE	'I_LEAVE'
-#intsig ENTER    'I_ENTER'
+intsig ENTER    'I_ENTER'
 
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
 intsig RESP     'REG_ESP'    	# Stack Pointer
@@ -90,10 +90,10 @@ bool instr_valid = icode in
 	{ NOP, HALT, RRMOVL, RMMOVL, MRMOVL,
 	       OPL,  JXX, CALL, RET, PUSHL, POPL };
 
-int instr_next_ifun = [
+#int instr_next_ifun = [
 #	icode == ENTER && ifun == 0 : 1;
-	1 : -1;
-];
+#	1 : -1;
+#];
 
 ################ Decode Stage    ###################################
 

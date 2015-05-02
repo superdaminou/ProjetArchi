@@ -35,6 +35,7 @@ typedef enum { I_NOP, I_HALT, I_RRMOVL, I_FREE2, I_RMMOVL, I_MRMOVL,
 #define I_IRMOVL I_RRMOVL
 
 
+
 /* Different ALU operations */
 /* JB ajout SAL (shift arithmetic left) and SAR (shift arithmetic right) */
 typedef enum { A_ADD, A_SUB, A_AND, A_XOR, A_SAL, A_SAR, A_NONE } alu_t;
