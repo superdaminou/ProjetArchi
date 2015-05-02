@@ -38,7 +38,7 @@ intsig POPL	'I_POPL'
 intsig JMEM	'I_JMEM'
 intsig JREG	'I_JREG'
 intsig LEAVE	'I_LEAVE'
-
+intsig ENTER	'I_ENTER'
 ##### Symbolic representation of Y86 Registers referenced explicitly #####
 intsig RESP     'REG_ESP'    	# Stack Pointer
 intsig REBP     'REG_EBP'    	# Frame Pointer
@@ -90,6 +90,7 @@ bool instr_valid = icode in
 	       OPL,  JXX, CALL, RET, PUSHL, POPL };
 
 int instr_next_ifun = [
+	icode == ENTER 	&& ifun == 0 : 1;
 	1:-1;
 ];
 
@@ -99,6 +100,8 @@ int instr_next_ifun = [
 
 	
 int srcA = [
+	icode == ENTER && ifun == 0 : REBP;
+	icode == ENTER && ifun == 1 : RESP;
 
 	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
 	icode in { POPL, RET } : RESP;
@@ -107,6 +110,8 @@ int srcA = [
 
 ## What register should be used as the B source?
 int srcB = [
+
+	icode == ENTER && ifun == 0 : RESP;
 
 	icode in { OPL, RMMOVL,MRMOVL } : rB;
 
@@ -118,6 +123,10 @@ int srcB = [
 
 ## What register should be used as the E destination?
 int dstE = [
+
+ 	icode == ENTER && ifun == 0 : RESP;
+	icode == ENTER && ifun == 1 : REBP;
+
 	icode in { RRMOVL, OPL} : rB;
 
 	
@@ -137,6 +146,9 @@ int dstM = [
 ## Select input A to ALU
 int aluA = [
 
+	icode == ENTER && ifun == 0 : -4;
+	icode == ENTER && ifun == 1 : valA;
+
 	icode == OPL && rA == RNONE : valC;
 	icode == OPL : valA;
 	
@@ -152,7 +164,8 @@ int aluA = [
 ## Select input B to ALU
 int aluB = [
 
-
+	icode == ENTER && ifun == 0 : valB;
+	icode == ENTER && ifun == 1 : 0;
 
 	icode in { RMMOVL, MRMOVL, OPL, CALL, PUSHL, RET, POPL } : valB;
 	icode == RRMOVL : 0;
@@ -174,10 +187,13 @@ bool set_cc = icode in { OPL };
 bool mem_read = icode in { MRMOVL, POPL, RET };
 
 ## Set write control signal
-bool mem_write = icode in { RMMOVL, PUSHL, CALL };
+bool mem_write = icode in { RMMOVL, PUSHL, CALL } || (icode == ENTER && ifun == 0);
 
 ## Select memory address
 int mem_addr = [
+
+	icode == ENTER && ifun == 0 : valE;
+
 	icode in { RMMOVL, PUSHL, CALL, MRMOVL } : valE;
 	icode in { POPL, RET } : valA;
 	# Other instructions don't need address
