@@ -50,7 +50,7 @@ instr_t instruction_set[] =
     
     {"nop",    HPACK(I_NOP, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
     {"halt",   HPACK(I_HALT, 0), 1, NO_ARG, 0, 0, NO_ARG, 0, 0 },
-    {"rrmovl", HPACK(I_RRMOVL, 0), 2, R_ARG, 1, 1, R_ARG, 1, 0 },
+    {"rrmovl", HPACK(I_RRMOVL, 0), 6, R_ARG, 1, 1, R_ARG, 1, 0 },
     /* arg1hi indicates number of bytes */
     {"irmovl", HPACK(I_IRMOVL, 0), 6, I_ARG, 2, 4, R_ARG, 1, 0 },
     {"rmmovl", HPACK(I_RMMOVL, 0), 6, R_ARG, 1, 1, M_ARG, 1, 0 },
