@@ -89,7 +89,9 @@ bool instr_valid = icode in
 	{ NOP, HALT, RRMOVL, RMMOVL, MRMOVL,
 	       OPL,  JXX, CALL, RET, PUSHL, POPL };
 
-
+int instr_next_ifun = [
+	1:-1;
+];
 
 ################ Decode Stage    ###################################
 

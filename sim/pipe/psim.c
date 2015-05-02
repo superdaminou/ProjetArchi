@@ -640,7 +640,7 @@ static void update_state(bool_t update_mem, bool_t update_cc)
 /* Return exception status of instruction in WB */
 /* Max_instr indicates maximum number of instructions that
    want to complete during this simulation run.  */
-static exc_t sim_step_pipe(int max_instr)
+static exc_t p_pipe(int max_instr)
 {
     exc_t wb_exc = mem_wb_curr->exception;
     exc_t mem_exc = mem_wb_next->exception;

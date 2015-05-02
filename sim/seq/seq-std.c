@@ -21,6 +21,11 @@ int gen_instr_valid()
     return ((icode) == (I_NOP)||(icode) == (I_HALT)||(icode) == (I_RRMOVL)||(icode) == (I_RMMOVL)||(icode) == (I_MRMOVL)||(icode) == (I_ALU)||(icode) == (I_JXX)||(icode) == (I_CALL)||(icode) == (I_RET)||(icode) == (I_PUSHL)||(icode) == (I_POPL));
 }
 
+int gen_instr_next_ifun()
+{
+    return (1 ? -1 : 0);
+}
+
 int gen_srcA()
 {
     return (((icode) == (I_RRMOVL)||(icode) == (I_RMMOVL)||(icode) == (I_ALU)||(icode) == (I_PUSHL)) ? (ra) : ((icode) == (I_POPL)||(icode) == (I_RET)) ? (REG_ESP) : 1 ? (REG_NONE) : 0);

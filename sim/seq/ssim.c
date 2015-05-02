@@ -371,6 +371,7 @@ int gen_pc();  /* SEQ+ */
 int gen_need_regids();
 int gen_need_valC();
 int gen_instr_valid();
+int gen_instr_next_ifun();
 int gen_srcA();
 int gen_srcB();
 int gen_dstE();
@@ -661,15 +662,19 @@ static exc_t sim_step()
         pc = gen_pc();
     }
     valp = pc;
-    if (get_byte_val(mem, valp, &instr)) {
-        icode = HI4(instr);
-        ifun = LO4(instr);
-    } else {
-        instr = HPACK(I_NOP,0);
-        icode = I_NOP;
-        ifun = 0;
-        status = EXC_ADDR;
-        sim_log("Couldn't fetch at address 0x%x\n", valp);
+    if (gen_instr_next_ifun()!= -1)
+	ifun=gen_instr_next_ifun();
+    else{
+        if (get_byte_val(mem, valp, &instr)) {
+            icode = HI4(instr);
+            ifun = LO4(instr);
+        } else {
+            instr = HPACK(I_NOP,0);
+            icode = I_NOP;
+            ifun = 0;
+            status = EXC_ADDR;
+            sim_log("Couldn't fetch at address 0x%x\n", valp);
+        }
     }
     valp++;
     if (gen_need_regids()) {
@@ -761,7 +766,8 @@ static exc_t sim_step()
         prev_bcond_in = bcond;
     } else {
         /* Update PC */
-        pc_in = gen_new_pc();
+	if (gen_instr_next_ifun() == -1)
+	    pc_in = gen_new_pc();
     }
     sim_report();
     return status;
