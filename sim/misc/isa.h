@@ -33,6 +33,7 @@ typedef enum { I_NOP, I_HALT, I_RRMOVL, I_FREE2, I_RMMOVL, I_MRMOVL,
 /* pour compatibilité */
 #define I_ALUI I_ALU
 #define I_IRMOVL I_RRMOVL
+#define I_ENTER1 I_ENTER
 
 
 

@@ -1,0 +1,128 @@
+Rapport du Projet d’architecture.
+Réalisé par Maxime Bourdarie et Damien Le Garrec
+
+I - Exercice I
+
+Le premier exercice a consisté à factoriser des instructions tel que iaddl et addl.
+Pour cela nous avons commencer par chercher l’ opcode dans le fichier isa.h, dans la definition itype. Nous avons reperer le code I_ALUI qui était liée a iaddl et nous l’avons remplacer par l’opcode I_FREE1 signifiant que cette « place » était libre.
+
+Ensuite sachant que l’on voulait que l’opcode I_ALUI soit considerer comme l’opcode I_ALU nous avons rajouter en dessous un define : #define I_ALUI I_ALU.
+
+comme cela nous assurions que tout les I_ALUI serait considerer comme des I_ALU. Mais cette operation a affecter le isa.c ou le case I_ALUI était toujours définis, pour palier a ca nous avons mis en commentaire tout ce case.
+
+Nous nous somme ensuite attaqué au fichier  seq-std.hcl.
+
+Nous avons commencer par mettre en commentaire le intsig IOPL.
+Ensuite nous somme aller dans la partie execute et nous avons ajouter deux ligne :
+
+icode == OPL && rA == RNONE : valC;
+icode == OPL : valA;
+
+La premiere ligne  permet d’effectuer le iaddl en vérifiant que le champ rA est a NONE et que l’on doit charger une constante.
+Alors que la deuxième ligne effectue le addl simple.
+
+Pour tester nous avons utiliser une série d’instruction simple :
+
+.pos 0
+irmovl 2, %eax
+iaddl 1, %eax
+irmovl 5,%ebx
+addl %eax, %ebx
+rrmovl %ebx, %eax
+halt
+
+
+Cela nous a permis  de verifier que la factorisation de iaddl et addl avait bien fonctionner.
+
+ensuite nous avons fait la meme chose pour le pipe-std.hcl :
+
+E_icode == OPL && E_srcA == RNONE : E_valC;
+E_icode == OPL : E_valA; 
+
+
+Ensuite nous nous somme pencher sur la factorisation de rrmovl et irmovl.
+Nous avons repris le fichier isa.h et nous avons changer l’opcode I_IRMOVL par I_FREE2
+et rajouter un nouveau define : #define  I_IRMOVL I_RRMOVL.
+
+Ensuite dans le ficher isa.c nous avons mis en commentaire le case I_IRMOVL.
+
+Apres nous nous somme occupé du ficher seq-std.hcl.
+
+Nous avons fonctionner de la meme manier que pour la factorisation de addl et iaddl.
+Nous avons d’abord mis en commentaire la ligne intsig de IRMOVL.
+
+Dans la partie execute nous avons rajouter deux ligne :
+
+icode == RRMOVL && rA == RNONE : valC;
+icode  == RRMOVL : valA;  
+
+La premiere ligne est dans le cas du irmovl si rA est a NONE alors il faut charger valC
+sinon c’est le rrmovl est dans ce cas la on charge valA.
+
+Pour la version pipe nous avons proceder de la meme facon.
+
+Dans la partie execute nous avons rajouter deux ligne :
+
+E_icode ==RRMOVL && E_srcA == RNONE :E_valC;
+E_icode == RRMOVL : E_valA;
+
+afin de tester cette factorisation nous avons utiliser le meme programme de test que pour la iaddl et addl.
+
+Mais nous avons rencontrer un problème, il s’est avérer que pendant les test l’instruction irmovl se « transformait » en nop. c’est a dire qu ‘au moment de l’exécution du irmovl c’était une intstruction nop qui était reconnu.
+
+
+II - Exercice 2
+
+Pour cette exercice nous avons modifié le fichier ssim.c et psim.c afin d’implementer gen_instr_next_ifun ().
+
+
+
+III - Exercice 3
+
+Pour cette exercice nous avons commencer par implementer l’instruction ENTER.
+
+Dans le fichier isa.h nous avons remplacer I_FREE1 par I_ENTER et nous avons ajouter enter a la liste des instruction dans le fichier yas-grammar.lex.
+Nous avons ensuite rajouter l’instruction enter dans le fichier isa.c et enter1 aussi ( pour enter1 nous avons passer le chap ifun a 1. Nous avons aussi rajouter un define dans le isa.h : #define ENTER1 ENTER.
+E enfin nous avons ajouter le intsig ENTER au pipe-std.hcl et seq-std.hcl ainsi que l’instruction  icode == ENTER && ifun == 0 : 1 au instr_next_ifun
+
+Nous nous somme ensuite pencher sur l’implémentation du enter dans seq-std.hcl 
+dans la partie Decode nous avons rajouter plusieurs ligne :
+
+int srcA = [
+	icode == ENTER && ifun == 0 : REBP;
+	icode == ENTER && ifun == 1 : RESP;
+
+	icode in { RRMOVL, RMMOVL, OPL, PUSHL } : rA;
+	icode in { POPL, RET } : RESP;
+	1 : RNONE; # Don't need register
+];
+
+## What register should be used as the B source?
+int srcB = [
+
+	icode == ENTER && ifun == 0 : RESP;
+
+	icode in { OPL, RMMOVL,MRMOVL } : rB;
+
+	
+
+	icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : RNONE;  # Don't need register
+];
+
+## What register should be used as the E destination?
+int dstE = [
+
+ 	icode == ENTER && ifun == 0 : RESP;
+	icode == ENTER && ifun == 1 : REBP;
+
+	icode in { RRMOVL, OPL} : rB;
+
+	
+
+	icode in { PUSHL, POPL, CALL, RET } : RESP;
+	1 : RNONE;  # Don't need register
+];
+
+
+Nous avons fait en sorte que en fonction de la valeur de ifun les valeurs d’entrée et de sortie soit les bonnes ( esp ou ebp ) et que la le registre de sortie soit le bon ( en fonction de l’instruction lié a fun par exemple esp si ifun=0 et ebp si ifun=1 )

@@ -87,7 +87,7 @@ bool need_valC =
 
 bool instr_valid = icode in 
 	{ NOP, HALT, RRMOVL, RMMOVL, MRMOVL,
-	       OPL,  JXX, CALL, RET, PUSHL, POPL };
+	       OPL,  JXX, CALL, RET, PUSHL, POPL, ENTER};
 
 int instr_next_ifun = [
 	icode == ENTER 	&& ifun == 0 : 1;
@@ -153,7 +153,7 @@ int aluA = [
 	icode == OPL : valA;
 	
 	icode == RRMOVL && rA == RNONE : valC;
-	icode in {RRMOVL} : valA;
+	icode == RRMOVL : valA;
 	
 	icode in {  RMMOVL, MRMOVL } : valC;
 	icode in { CALL, PUSHL } : -4;
