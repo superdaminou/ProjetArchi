@@ -201,6 +201,7 @@ int mem_addr = [
 
 ## Select memory input data
 int mem_data = [
+	icode == ENTER && ifun == 0 : valA;
 	# Value from register
 	icode in { RMMOVL, PUSHL } : valA;
 	# Return PC
